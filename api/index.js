@@ -2,72 +2,70 @@ var router = require('express').Router();
 var mocks = require('./mock');
 var assign = require('object-assign');
 
-router.get('/desk', function (req, res, next) {
-    var desks = mocks.desks.map(function (desk) {
-            return assign({}, desk, {
+router.get('/article', function (req, res, next) {
+    var articles = mocks.articles.map(function (article) {
+            return assign({}, article, {
                 text: undefined
             })
         }),
-        limit = Number(req.query.limit) || desks.length,
+        limit = Number(req.query.limit) || articles.length,
         offset = Number(req.query.offset) || 0;
 
-    res.json(desks.slice(offset, limit + offset))
+    res.json(articles.slice(offset, limit + offset))
 });
 
-router.get('/desk/:id', function (req, res, next) {
-
-    
-    var desk = mocks.desks.filter(function (desk) {
-        return desk.id == req.params.id
+router.get('/article/:id', function (req, res, next) {
+    var article = mocks.articles.filter(function (article) {
+        return article.id == req.params.id
     })[0];
-    if (desk) return res.json(desk);
+    if (article) return res.json(article);
 
     res.status(404).json({error: "not found"});
 });
 
-router.post('/desk', function (req, res, next) {
+router.post('/article', function (req, res, next) {
     var body = req.body;
-    var desk = {
+    var article = {
         text: body.text,
         id: Date.now().toString(),
         user: body.user,
         date: new Date()
     };
-    mocks.desks.push(desk);
-    res.json(desk)
+    mocks.articles.push(article);
+    res.json(article)
 });
 
-router.get('/kudos', function (req, res, next) {
-    var aid = req.query.desk;
+router.get('/comment', function (req, res, next) {
+    var aid = req.query.article;
     if (aid) {
-        var desk = mocks.desks.find(function(desk) {
-            return desk.id == aid
+        var article = mocks.articles.find(function(article) {
+            return article.id == aid
         })
-        return res.json((desk.kudoses || []).map(function(id) {
-            return mocks.kudoses.find(function(kudos) {
-                return kudos.id == id
+        return res.json((article.comments || []).map(function(id) {
+            return mocks.comments.find(function(comment) {
+                return comment.id == id
             })
         }))
     }
 
-    var limit = Number(req.query.limit) || mocks.kudoses.length,
+    var limit = Number(req.query.limit) || mocks.comments.length,
         offset = Number(req.query.offset) || 0;
     res.json({
-        total: mocks.kudoses.length,
-        records: mocks.kudoses.slice(offset, limit + offset)
+        total: mocks.comments.length,
+        records: mocks.comments.slice(offset, limit + offset)
     })
 });
 
-router.post('/kudos', function (req, res, next) {
-    var kudos = {
+router.post('/comment', function (req, res, next) {
+    var comment = {
         id : Date.now().toString(),
         text : req.body.text,
         date: new Date(),
         user: req.body.user,
-        desk : req.body.desk
+        article : req.body.article
     };
-    mocks.kudoses.push(kudos);
-    res.json(kudos)
+    mocks.comments.push(comment);
+    res.json(comment)
 });
 
 router.post('/report', function (req, res) {
