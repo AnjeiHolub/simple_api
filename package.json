@@ -1,0 +1,23 @@
+{
+  "name": "simple_api",
+  "version": "0.0.1",
+  "description": "core",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "core-js": "^0.9.6",
+    "object-assign": "4.0.1",
+    "qs": "^5.2.0",
+    "express": "^4.13.3"
+  },
+  "scripts": {
+    "start": "supervisor server.js"
+  },
+  "engines": {
+    "node": "8.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnjeiHolub/simple_api"
+  }
+}
