@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var app = express();
 
 app.use(bodyParser.json());
-app.use('/api', api)
+app.use('/api', path.join(__dirname, 'api'))
 
 var server = app.listen(process.env.PORT || 8080, function (err) {
     if (err) {
