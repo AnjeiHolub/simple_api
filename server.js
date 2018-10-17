@@ -8,11 +8,12 @@ var app = express();
 app.use(bodyParser.json());
 app.use('/api', api)
 
-app.listen(process.env.PORT || 8080, function (err) {
+var server = app.listen(process.env.PORT || 8080, function (err) {
     if (err) {
         console.log(err);
         return;
     }
 
-    console.log('Listening at http://localhost:' + port);
+    var port = server.address().port;
+    console.log("App now running on port", port);
 });
