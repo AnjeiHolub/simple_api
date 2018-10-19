@@ -1,7 +1,14 @@
 var router = require('express').Router();
 var mocks = require('./mock');
 var assign = require('object-assign');
- router.get('/desk', function (req, res, next) {
+
+router.all(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+router.get('/desk', function (req, res, next) {
     var desks = mocks.desks.map(function (desk) {
             return assign({}, desk, {
                 text: undefined
@@ -11,7 +18,8 @@ var assign = require('object-assign');
         offset = Number(req.query.offset) || 0;
      res.json(desks.slice(offset, limit + offset))
 });
- router.get('/desk/:id', function (req, res, next) {
+
+router.get('/desk/:id', function (req, res, next) {
      
     var desk = mocks.desks.filter(function (desk) {
         return desk.id == req.params.id
@@ -19,7 +27,8 @@ var assign = require('object-assign');
     if (desk) return res.json(desk);
      res.status(404).json({error: "not found"});
 });
- router.post('/desk', function (req, res, next) {
+
+router.post('/desk', function (req, res, next) {
     var body = req.body;
     var desk = {
         text: body.text,
@@ -30,7 +39,8 @@ var assign = require('object-assign');
     mocks.desks.push(desk);
     res.json(desk)
 });
- router.get('/kudos', function (req, res, next) {
+
+router.get('/kudos', function (req, res, next) {
     var aid = req.query.desk;
     if (aid) {
         var desk = mocks.desks.find(function(desk) {
@@ -49,7 +59,8 @@ var assign = require('object-assign');
         records: mocks.kudoses.slice(offset, limit + offset)
     })
 });
- router.post('/kudos', function (req, res, next) {
+
+router.post('/kudos', function (req, res, next) {
     var kudos = {
         id : Date.now().toString(),
         text : req.body.text,
@@ -60,7 +71,8 @@ var assign = require('object-assign');
     mocks.kudoses.push(kudos);
     res.json(kudos)
 });
- router.post('/report', function (req, res) {
+
+router.post('/report', function (req, res) {
     res.json({})
 })
  module.exports = router;
