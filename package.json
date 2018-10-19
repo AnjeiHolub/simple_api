@@ -8,6 +8,7 @@
     "core-js": "^0.9.6",
     "cors": "^2.8.4",
     "express": "^4.13.3",
+    "firebase-admin": "^6.0.0",
     "object-assign": "4.0.1",
     "qs": "^5.2.0"
   },

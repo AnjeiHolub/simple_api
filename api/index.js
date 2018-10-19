@@ -1,9 +1,29 @@
 var router = require('express').Router();
 var mocks = require('./mock');
 var assign = require('object-assign');
+var admin = require('firebase-admin');
+
+var serviceAccount = require('../serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://kudos-f16.firebaseio.com'
+});
+
+var db = admin.database();
+
+var desks = db.ref("desks");
+
+var data = null;
+
+desks.on("value", function(snapshot) {
+    data = snapshot.val();
+}, function (errorObject) {
+    console.log("The read failed: " + errorObject.code);
+});
 
 router.get('/desk', function (req, res, next) {
-    var desks = mocks.desks.map(function (desk) {
+    var desks = data.map(function (desk) {
             return assign({}, desk, {
                 text: undefined
             })
