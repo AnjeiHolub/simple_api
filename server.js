@@ -3,24 +3,6 @@ var express = require('express');
 var api = require('./api');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var admin = require('firebase-admin');
-
-var serviceAccount = require('./serviceAccountKey.json');
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://kudos-f16.firebaseio.com'
-});
-
-var db = admin.database();
-
-var desks = db.ref("desks");
-
-desks.on("value", function(snapshot) {
-    console.log(snapshot.val());
-}, function (errorObject) {
-    console.log("The read failed: " + errorObject.code);
-});
 
 var app = express();
 

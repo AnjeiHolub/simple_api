@@ -3,7 +3,7 @@ var mocks = require('./mock');
 var assign = require('object-assign');
 var admin = require('firebase-admin');
 
-var serviceAccount = require('../serviceAccountKey.json');
+var serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -22,8 +22,9 @@ desks.on("value", function(snapshot) {
     console.log("The read failed: " + errorObject.code);
 });
 
+
 router.get('/desk', function (req, res, next) {
-    var desks = mock.desks.map(function (desk) {
+    var desks = data.map(function (desk) {
             return assign({}, desk, {
                 text: undefined
             })
