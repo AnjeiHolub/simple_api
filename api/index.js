@@ -2,7 +2,6 @@ var router = require('express').Router();
 var mocks = require('./mock');
 var assign = require('object-assign');
 var admin = require('firebase-admin');
-
 var serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
@@ -10,21 +9,29 @@ admin.initializeApp({
   databaseURL: 'https://kudos-f16.firebaseio.com'
 });
 
-var db = admin.database();
+var database = admin.database();
 
-var desks = db.ref("desks");
+var desksRef = database.ref("desks");
+var kudosesRef = database.ref("kudoses");
 
-var data = null;
+var desksData = null;
+var kudosesData = null;
 
-desks.on("value", function(snapshot) {
-    data = snapshot.val();
+desksRef.on("value", function(snapshot) {
+    desksData = snapshot.val();
+}, function (errorObject) {
+    console.log("The read failed: " + errorObject.code);
+});
+
+kudosesRef.on("value", function(snapshot) {
+    kudosesData = snapshot.val();
 }, function (errorObject) {
     console.log("The read failed: " + errorObject.code);
 });
 
 
 router.get('/desk', function (req, res, next) {
-    var desks = data.map(function (desk) {
+    var desks = desksData.map(function (desk) {
             return assign({}, desk, {
                 text: undefined
             })
@@ -36,7 +43,7 @@ router.get('/desk', function (req, res, next) {
 
 router.get('/desk/:id', function (req, res, next) {
      
-    var desk = mocks.desks.filter(function (desk) {
+    var desk = desksData.filter(function (desk) {
         return desk.id == req.params.id
     })[0];
     if (desk) return res.json(desk);
@@ -51,27 +58,27 @@ router.post('/desk', function (req, res, next) {
         user: body.user,
         date: new Date()
     };
-    mocks.desks.push(desk);
+    desksData.push(desk);
     res.json(desk)
 });
 
 router.get('/kudos', function (req, res, next) {
     var aid = req.query.desk;
     if (aid) {
-        var desk = mocks.desks.find(function(desk) {
+        var desk = desksData.find(function(desk) {
             return desk.id == aid
         })
         return res.json((desk.kudoses || []).map(function(id) {
-            return mocks.kudoses.find(function(kudos) {
+            return kudosesData.find(function(kudos) {
                 return kudos.id == id
             })
         }))
     }
-     var limit = Number(req.query.limit) || mocks.kudoses.length,
+     var limit = Number(req.query.limit) || kudosesData.length,
         offset = Number(req.query.offset) || 0;
     res.json({
-        total: mocks.kudoses.length,
-        records: mocks.kudoses.slice(offset, limit + offset)
+        total: kudosesData.length,
+        records: kudosesData.slice(offset, limit + offset)
     })
 });
 
@@ -83,7 +90,7 @@ router.post('/kudos', function (req, res, next) {
         user: req.body.user,
         desk : req.body.desk
     };
-    mocks.kudoses.push(kudos);
+    kudosesData.push(kudos);
     res.json(kudos)
 });
 
