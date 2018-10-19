@@ -23,7 +23,7 @@ desks.on("value", function(snapshot) {
 });
 
 router.get('/desk', function (req, res, next) {
-    var desks = data.map(function (desk) {
+    var desks = mock.desks.map(function (desk) {
             return assign({}, desk, {
                 text: undefined
             })
