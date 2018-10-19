@@ -2,12 +2,6 @@ var router = require('express').Router();
 var mocks = require('./mock');
 var assign = require('object-assign');
 
-router.all(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
 router.get('/desk', function (req, res, next) {
     var desks = mocks.desks.map(function (desk) {
             return assign({}, desk, {
