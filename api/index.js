@@ -11,14 +11,14 @@ admin.initializeApp({
 
 var database = admin.database();
 
-var desksRef = database.ref("desks");
+var boardsRef = database.ref("boards");
 var kudosesRef = database.ref("kudoses");
 
-var desksData = null;
+var boardsData = null;
 var kudosesData = null;
 
-desksRef.on("value", function(snapshot) {
-    desksData = snapshot.val();
+boardsRef.on("value", function(snapshot) {
+    boardsData = snapshot.val();
 }, function (errorObject) {
     console.log("The read failed: " + errorObject.code);
 });
@@ -30,45 +30,45 @@ kudosesRef.on("value", function(snapshot) {
 });
 
 
-router.get('/desk', function (req, res, next) {
-    var desks = desksData.map(function (desk) {
-            return assign({}, desk, {
+router.get('/board', function (req, res, next) {
+    var boards = boardsData.map(function (board) {
+            return assign({}, board, {
                 text: undefined
             })
         }),
-        limit = Number(req.query.limit) || desks.length,
+        limit = Number(req.query.limit) || boards.length,
         offset = Number(req.query.offset) || 0;
-     res.json(desks.slice(offset, limit + offset))
+     res.json(boards.slice(offset, limit + offset))
 });
 
-router.get('/desk/:id', function (req, res, next) {
+router.get('/board/:id', function (req, res, next) {
      
-    var desk = desksData.filter(function (desk) {
-        return desk.id == req.params.id
+    var board = boardsData.filter(function (board) {
+        return board.id == req.params.id
     })[0];
-    if (desk) return res.json(desk);
+    if (board) return res.json(board);
      res.status(404).json({error: "not found"});
 });
 
-router.post('/desk', function (req, res, next) {
+router.post('/board', function (req, res, next) {
     var body = req.body;
-    var desk = {
+    var board = {
         text: body.text,
         id: Date.now().toString(),
         user: body.user,
         date: new Date()
     };
-    desksData.push(desk);
-    res.json(desk)
+    boardsData.push(board);
+    res.json(board)
 });
 
 router.get('/kudos', function (req, res, next) {
-    var aid = req.query.desk;
+    var aid = req.query.board;
     if (aid) {
-        var desk = desksData.find(function(desk) {
-            return desk.id == aid
+        var board = boardsData.find(function(board) {
+            return board.id == aid
         })
-        return res.json((desk.kudoses || []).map(function(id) {
+        return res.json((board.kudoses || []).map(function(id) {
             return kudosesData.find(function(kudos) {
                 return kudos.id == id
             })
