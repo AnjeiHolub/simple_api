@@ -6,7 +6,7 @@ var serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://kudos-f16.firebaseio.com/data'
+  databaseURL: 'https://kudos-f16.firebaseio.com/data/'
 });
 
 var database = admin.database();
